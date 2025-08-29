@@ -38,7 +38,7 @@ def initialize_vocab(fpath:str)->dict:
 
 ####### END OF STARTER FUNCTIONS #####
 
-def clean_words(words: list) -> list: 
+def clean_words(words: list[str]) -> list: 
     """Keeps words with just letters and digits.
     Also removes punctuation and converts to lower case. 
 
@@ -54,26 +54,31 @@ def clean_words(words: list) -> list:
     >>> clean_words(["!!", "?%"])
     []
     """
+    cleaned_words = []
+    for word in words:
+        alnum_word = ''.join(c for c in word if c.isalnum()) # only includes alphanumeric characters.
+        if alnum_word: # omitting empty string
+            cleaned_word = alnum_word.lower()
+            cleaned_words.append(cleaned_word)
+    return cleaned_words
+
+def update_frequencies(freq_dict: dict, fpath: str) -> dict:
+    """Updates existing frequency dictionary with the words in fpath
+
+    Params:
+        freq_dict: dictionary of frequencies
+        fpath: path to the file with new text
+
+    Returns: 
+        Modified original dictionary (makes it easy for doctest)
+
+    >>> update_frequencies({'here': 0, 'is':0, 'a':0, 'sentence':0, 'UNK':0}, 'data/test.txt')
+    {'here': 1, 'is': 1, 'a': 2, 'sentence': 2, 'UNK': 1}
+
+    >>> update_frequencies({'here': 2, 'is':3, 'a':1, 'sentence':0, 'UNK':1}, 'data/test.txt')
+    {'here': 3, 'is': 4, 'a': 3, 'sentence': 2, 'UNK': 2}
+    """
     pass
-
-
-# def update_frequencies(freq_dict: dict, fpath: str) -> dict:
-#     """Updates existing frequency dictionary with the words in fpath
-
-#     Params:
-#         freq_dict: dictionary of frequencies
-#         fpath: path to the file with new text
-
-#     Returns: 
-#         Modified original dictionary (makes it easy for doctest)
-
-#     >>> update_frequencies({'here': 0, 'is':0, 'a':0, 'sentence':0, 'UNK':0}, 'data/test.txt')
-#     {'here': 1, 'is': 1, 'a': 2, 'sentence': 2, 'UNK': 1}
-
-#     >>> update_frequencies({'here': 2, 'is':3, 'a':1, 'sentence':0, 'UNK':1}, 'data/test.txt')
-#     {'here': 3, 'is': 4, 'a': 3, 'sentence': 2, 'UNK': 2}
-#     """
-#     pass
 
 
 # def get_probabilities(freq_dict: dict) -> dict: 
