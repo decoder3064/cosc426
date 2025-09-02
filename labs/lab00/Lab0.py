@@ -101,29 +101,35 @@ def update_frequencies(freq_dict: dict, fpath: str) -> dict:
     
     return updated_dict
 
-# def get_probabilities(freq_dict: dict) -> dict: 
-#     """ Converts frequencies to probabilities
+def get_probabilities(freq_dict: dict) -> dict: 
+    """ Converts frequencies to probabilities
 
-#     Params: 
-#         freq_dict: dictionary with frequencies
+    Params: 
+        freq_dict: dictionary with frequencies
 
-#     Returns: 
-#         New dictionary where frequencies are used to compute probabilities
+    Returns: 
+        New dictionary where frequencies are used to compute probabilities
 
-#     >>> get_probabilities({'here': 1, 'is':1, 'a':1, 'sentence':0, 'UNK':2})
-#     {'here': 0.2, 'is': 0.2, 'a': 0.2, 'sentence': 0.0, 'UNK': 0.4}
+    >>> get_probabilities({'here': 1, 'is':1, 'a':1, 'sentence':0, 'UNK':2})
+    {'here': 0.2, 'is': 0.2, 'a': 0.2, 'sentence': 0.0, 'UNK': 0.4}
 
-#     >>> get_probabilities({'here': 4, 'is':6, 'a':0, 'sentence':0, 'UNK':0})
-#     {'here': 0.4, 'is': 0.6, 'a': 0.0, 'sentence': 0.0, 'UNK': 0.0}
+    >>> get_probabilities({'here': 4, 'is':6, 'a':0, 'sentence':0, 'UNK':0})
+    {'here': 0.4, 'is': 0.6, 'a': 0.0, 'sentence': 0.0, 'UNK': 0.0}
 
-#     >>> get_probabilities({'here': 0.0, 'is':0.0, 'a':0.0, 'sentence':0.0, 'UNK':10})
-#     {'here': 0.0, 'is': 0.0, 'a': 0.0, 'sentence': 0.0, 'UNK': 1.0}
+    >>> get_probabilities({'here': 0.0, 'is':0.0, 'a':0.0, 'sentence':0.0, 'UNK':10})
+    {'here': 0.0, 'is': 0.0, 'a': 0.0, 'sentence': 0.0, 'UNK': 1.0}
 
-#     >>> get_probabilities({'here': 0, 'is': 0, 'a': 0, 'sentence': 0, 'UNK': 0})
-#     {'here': 0, 'is': 0, 'a': 0, 'sentence': 0, 'UNK': 0}
-#     """
+    >>> get_probabilities({'here': 0, 'is': 0, 'a': 0, 'sentence': 0, 'UNK': 0})
+    {'here': 0, 'is': 0, 'a': 0, 'sentence': 0, 'UNK': 0}
+    """
+    prob_dict: dict[str, float] = dict.fromkeys(freq_dict, 0) # return dict. init w/ 0 instead of 0.0 b/c test reqmt. 
+    freq_sum: int = sum(freq_dict.values()) 
+    
+    if freq_sum:
+        for key, val in freq_dict.items():
+            prob_dict[key] = val / freq_sum
 
-#     pass
+    return prob_dict
 
 # def get_logprob_text(text:str, prob_dict:dict, eps: float) -> float:
 #     """ Returns log probability of a text given some probability dictionary
