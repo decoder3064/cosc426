@@ -78,8 +78,28 @@ def update_frequencies(freq_dict: dict, fpath: str) -> dict:
     >>> update_frequencies({'here': 2, 'is':3, 'a':1, 'sentence':0, 'UNK':1}, 'data/test.txt')
     {'here': 3, 'is': 4, 'a': 3, 'sentence': 2, 'UNK': 2}
     """
-    pass
+    updated_dict:dict[str, int] = freq_dict.copy() # init return dict
+    
+    try: # read file ? proceed : error
+        with open(fpath, 'r') as file_object:
+            for line in file_object:
+                # clean up
+                line = line.strip()
+                line = line.lower()
+                
+                words = line.split(" ")
 
+                # in keys ? Word +1 : UNK +1
+                for word in words: 
+                    if word in freq_dict:
+                        updated_dict[word] += 1
+                    else:
+                        updated_dict['UNK'] += 1
+            
+    except FileNotFoundError:
+        print(f'{fpath} NOT FOUND')    
+    
+    return updated_dict
 
 # def get_probabilities(freq_dict: dict) -> dict: 
 #     """ Converts frequencies to probabilities
