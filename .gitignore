@@ -1,3 +1,6 @@
 labs/lab00/data
 .DS_Store
 .vscode
+labs/lab00/prob_dict.json
+labs/lab00/predictions.txt
+labs/lab00/predictions_toy.txt
