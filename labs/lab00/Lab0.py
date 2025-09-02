@@ -12,6 +12,8 @@ import os
 import doctest
 import math
 
+# additional import
+import json 
 
 def get_filepaths(root_dir:str) -> list:
 
@@ -56,8 +58,8 @@ def clean_words(words: list[str]) -> list:
     """
     cleaned_words = []
     for word in words:
-        alnum_word = ''.join(c for c in word if c.isalnum()) # only includes alphanumeric characters.
-        if alnum_word: # omitting empty string
+        alnum_word = ''.join(c for c in word if c.isalnum()) # only alphanumeric characters
+        if alnum_word: # omit empty string
             cleaned_word = alnum_word.lower()
             cleaned_words.append(cleaned_word)
     return cleaned_words
@@ -78,16 +80,14 @@ def update_frequencies(freq_dict: dict, fpath: str) -> dict:
     >>> update_frequencies({'here': 2, 'is':3, 'a':1, 'sentence':0, 'UNK':1}, 'data/test.txt')
     {'here': 3, 'is': 4, 'a': 3, 'sentence': 2, 'UNK': 2}
     """
-    updated_dict:dict[str, int] = freq_dict.copy() # init return dict
+    updated_dict:dict[str, int] = freq_dict.copy() # return val.
+    if 'UNK' not in freq_dict:
+        updated_dict['UNK'] = 0
     
     try: # read file ? proceed : error
-        with open(fpath, 'r') as file_object:
-            for line in file_object:
-                # clean up
-                line = line.strip()
-                line = line.lower()
-                
-                words = line.split(" ")
+        with open(fpath, 'r') as f:
+            for line in f:
+                words = clean_words(line.split())
 
                 # in keys ? Word +1 : UNK +1
                 for word in words: 
@@ -95,9 +95,8 @@ def update_frequencies(freq_dict: dict, fpath: str) -> dict:
                         updated_dict[word] += 1
                     else:
                         updated_dict['UNK'] += 1
-            
     except FileNotFoundError:
-        print(f'{fpath} NOT FOUND')    
+        print(f'{fpath} NOT FOUND')
     
     return updated_dict
 
@@ -122,7 +121,7 @@ def get_probabilities(freq_dict: dict) -> dict:
     >>> get_probabilities({'here': 0, 'is': 0, 'a': 0, 'sentence': 0, 'UNK': 0})
     {'here': 0, 'is': 0, 'a': 0, 'sentence': 0, 'UNK': 0}
     """
-    prob_dict: dict[str, float] = dict.fromkeys(freq_dict, 0) # return dict. init w/ 0 instead of 0.0 b/c test reqmt. 
+    prob_dict: dict[str, float] = dict.fromkeys(freq_dict, 0) # return val. Init w/ 0 instead of 0.0 b/c test reqmt. 
     freq_sum: int = sum(freq_dict.values()) 
     
     if freq_sum:
@@ -131,92 +130,119 @@ def get_probabilities(freq_dict: dict) -> dict:
 
     return prob_dict
 
-# def get_logprob_text(text:str, prob_dict:dict, eps: float) -> float:
-#     """ Returns log probability of a text given some probability dictionary
+def get_logprob_text(text:str, prob_dict:dict, eps: float) -> float:
+    """ Returns log probability of a text given some probability dictionary
 
-#     Params: 
-#         text: text to compute the probability of
-#         prob_dict: dictionary returned by get_probabilties
-#         eps: some small value to make sure we are not taking log of 0. 
+    Params: 
+        text: text to compute the probability of
+        prob_dict: dictionary returned by get_probabilties
+        eps: some small value to make sure we are not taking log of 0. 
 
-#     Returns: 
-#         The sum of the log probabilities of all the words in the text given the prob_dict. 
-#         Hint: You can get log of a number x with math.log(x). Remember to add epsilon before taking the log! 
+    Returns: 
+        The sum of the log probabilities of all the words in the text given the prob_dict. 
+        Hint: You can get log of a number x with math.log(x). Remember to add epsilon before taking the log! 
     
-#     >>> get_logprob_text('here is a sentence!!', {'here': 0.3, 'is': 0.3, 'a': 0.3, 'sentence': 0.15, 'UNK': 0.05}, 0.0001)
-#     -5.507372119950168
+    >>> get_logprob_text('here is a sentence!!', {'here': 0.3, 'is': 0.3, 'a': 0.3, 'sentence': 0.15, 'UNK': 0.05}, 0.0001)
+    -5.507372119950168
 
-#     >>> get_logprob_text('here is a new sentence!!', {'here': 0.3, 'is': 0.3, 'a': 0.2, 'sentence': 0.15, 'UNK': 0.05}, 0.0001)
-#     -8.906404901698119
+    >>> get_logprob_text('here is a new sentence!!', {'here': 0.3, 'is': 0.3, 'a': 0.2, 'sentence': 0.15, 'UNK': 0.05}, 0.0001)
+    -8.906404901698119
 
-#     >>> get_logprob_text('here is some new text!!', {'here': 0.3, 'is': 0.3, 'a': 0.2, 'sentence': 0.15, 'UNK': 0.05}, 0.0001)
-#     -11.388481865745586
-#     """
-#     pass
+    >>> get_logprob_text('here is some new text!!', {'here': 0.3, 'is': 0.3, 'a': 0.2, 'sentence': 0.15, 'UNK': 0.05}, 0.0001)
+    -11.388481865745586
+    """
+    log_prob:float = 0.0 # reutrn val. Init 0.0 to fool proof
+    words = clean_words(text.split())
+    
+    for word in words:
+        # word in dict ? word : unk prob
+        prob = prob_dict[word] if word in prob_dict else prob_dict['UNK']
+        log_prob += math.log(prob + eps)
+    
+    return log_prob
 
-# def classify(text: str, class_dicts:dict, eps: float) -> str: 
-#     """Classifies text based on log probability given different classes. 
+def classify(text: str, class_dicts:dict, eps: float) -> str: 
+    """Classifies text based on log probability given different classes. 
 
-#     Params: 
-#         text: text to be classified
+    Params: 
+        text: text to be classified
 
-#         class_dicts: nested dictionary where keys are the classes, and values are dictionaries that correspond to the probability dictionary for the class (as derived from get_probabilities)
+        class_dicts: nested dictionary where keys are the classes, and values are dictionaries that correspond to the probability dictionary for the class (as derived from get_probabilities)
 
-#         eps: some small value to make sure we are not taking log of 0 in get_logprob_text
+        eps: some small value to make sure we are not taking log of 0 in get_logprob_text
 
-#     Returns:
-#         The class in class_dicts that assigns the highest log prob value to the text
-
-
-#     >>> classify('here is some text!!',{'A': {'here': 0.2, 'is': 0.2, 'a': 0.2, 'sentence': 0.2, 'UNK': 0.2}, 'B': {'here': 0.2, 'is': 0.15, 'a': 0.3, 'sentence': 0.3, 'UNK': 0.05}},0.0001)
-#     'A'
-
-#     >>> classify('a word or two',{'A': {'one': 0.4, 'word': 0.4, 'UNK': 0.2}, 'B': {'one': 0.4, 'word': 0.3, 'UNK': 0.3}, 'C': {'one': 0.1, 'word': 0.4, 'UNK': 0.5}},0.0001)
-#     'C'
-#     """
-
-#     best_logprob = -math.inf ##give them this line
-#     pass
+    Returns:
+        The class in class_dicts that assigns the highest log prob value to the text
 
 
-# def train(train_dict: dict, freq_dict: dict):
-#     """For each class, trains a model for each class (i.e., creates a probability dictionary) given a list of files.
+    >>> classify('here is some text!!',{'A': {'here': 0.2, 'is': 0.2, 'a': 0.2, 'sentence': 0.2, 'UNK': 0.2}, 'B': {'here': 0.2, 'is': 0.15, 'a': 0.3, 'sentence': 0.3, 'UNK': 0.05}},0.0001)
+    'A'
 
-#     Params:
-#         train_dict: A dictionary where keys are the labels and the values are a list of files associated with the label to train the model
+    >>> classify('a word or two',{'A': {'one': 0.4, 'word': 0.4, 'UNK': 0.2}, 'B': {'one': 0.4, 'word': 0.3, 'UNK': 0.3}, 'C': {'one': 0.1, 'word': 0.4, 'UNK': 0.5}},0.0001)
+    'C'
+    """
+    highest_class = '' # return val.
+    best_logprob = -math.inf # give them this line
+    
+    for cls, prob_dict in class_dicts.items():    
+        curr_logprob = get_logprob_text(text,prob_dict,eps)
+        if curr_logprob > best_logprob:
+            best_logprob = curr_logprob
+            highest_class = cls
+    
+    return highest_class
 
-#         freq_dict: A dictionary where keys are the words in vocabulary and the values are the counts of the words (which keeps getting updated over training)
 
-#     Returns: 
-#         Nothing. But modifies freq_dict. 
+def train(train_dict: dict, freq_dict: dict):
+    """For each class, trains a model for each class (i.e., creates a probability dictionary) given a list of files.
 
-#     """
+    Params:
+        train_dict: A dictionary where keys are the labels and the values are a list of files associated with the label to train the model
 
-#     pass
+        freq_dict: A dictionary where keys are the words in vocabulary and the values are the counts of the words (which keeps getting updated over training)
+
+    Returns: 
+        Nothing. But modifies freq_dict. 
+
+    """
+    prob_dict = {} # file content
+    
+    for label, fpaths in train_dict.items():
+        for fpath in fpaths:
+            freq_dict[label] = update_frequencies(freq_dict[label], fpath)
+        
+        prob_dict[label] = get_probabilities(freq_dict[label])
+        
+    with open('prob_dict.json', "w") as f:
+        json.dump(prob_dict, f, indent=4)
 
 
+def classify_texts(class_dicts:dict, fpaths: dict, outfpath: str) -> None: 
+    """ Classifies texts for different classes. Creates a file with all the sentences and predictions.   
 
-# def classify_texts(class_dicts:dict, fpaths: dict, outfpath: str) -> None: 
-#     """ Classifies texts for different classes. Creates a file with all the sentences and predictions.   
+    Params: 
+        class_dicts: A dictionary where keys are the words in vocabulary and the values are the probability of the word given the label
 
-#     Params: 
-#         class_dicts: A dictionary where keys are the words in vocabulary and the values are the probability of the word given the label
+        fpaths: A dictionary where keys are the labels and the values are a list of files associated with the label to evaluate the model on
 
-#         fpaths: A dictionary where keys are the labels and the values are a list of files associated with the label to evaluate the model on
-
-#         outfpath: A filepath to save all the predictions to
-#     """
+        outfpath: A filepath to save all the predictions to
+    """
 
     
-#     eps = 0.0001
-#     headers = ["text", "gold", "predicted", "correct"]
-#     output = ["\t".join(headers)]
-
-#     pass
-
-
-
-
+    eps = 0.0001
+    headers = ["text", "gold", "predicted", "correct"]
+    output = ["\t".join(headers)]
+    
+    for label, paths in fpaths.items(): # Note: gold = label
+        for path in paths:                
+                with open(path, "r") as rf:
+                    for line in rf: # Note: text = line
+                        predicted = classify(line, class_dicts, eps)
+                        correct = str(label == predicted)
+                        row = '\t'.join([line.strip(), label, predicted, correct])
+                        output.append(row)
+    with open(outfpath, 'w') as f:
+        f.writelines(line + '\n' for line in output)
 def main():
 
     train_dict = {
@@ -243,7 +269,21 @@ def main():
     outfpath_toy = 'predictions_toy.txt'
 
     ## Implement the rest of the main function
-    pass
+    try:
+        train(train_dict, freq_dict)
+    except Exception as e:
+        print(f"TRAIN FAILED: {e}")
+        
+    class_dicts ={}
+    
+    with open("prob_dict.json", "r") as f:
+        class_dicts = json.load(f)
+        
+    # for toy
+    classify_texts(class_dicts, test_toy, outfpath_toy)
+
+    # for test
+    classify_texts(class_dicts, test, outfpath)
 
 
 ### DO NOT DELETE THESE LINES
