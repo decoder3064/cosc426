@@ -236,11 +236,14 @@ def classify_texts(class_dicts:dict, fpaths: dict, outfpath: str) -> None:
     for label, paths in fpaths.items(): # Note: gold = label
         for path in paths:                
                 with open(path, "r") as rf:
-                    for line in rf: # Note: text = line
-                        predicted = classify(line, class_dicts, eps)
-                        correct = str(label == predicted)
-                        row = '\t'.join([line.strip(), label, predicted, correct])
-                        output.append(row)
+                    next(rf) # skipping title
+                    for line in rf:
+                        cleaned_line = line.strip().replace('\t', ' ') # Note: text = cleaned_line
+                        if cleaned_line:
+                            predicted = classify(cleaned_line, class_dicts, eps)
+                            correct = str(int(label == predicted))
+                            row = '\t'.join([cleaned_line, label, predicted, correct])
+                            output.append(row)
     with open(outfpath, 'w') as f:
         f.writelines(line + '\n' for line in output)
 def main():
