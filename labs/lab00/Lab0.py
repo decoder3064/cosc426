@@ -236,7 +236,7 @@ def classify_texts(class_dicts:dict, fpaths: dict, outfpath: str) -> None:
     for label, paths in fpaths.items(): # Note: gold = label
         for path in paths:                
                 with open(path, "r") as rf:
-                    next(rf) # skipping title
+                    # next(rf) # skipping title. ultimately removed it b/c toy files don't have titles
                     for line in rf:
                         cleaned_line = line.strip().replace('\t', ' ') # Note: text = cleaned_line
                         if cleaned_line:

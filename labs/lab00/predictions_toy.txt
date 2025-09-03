@@ -1,4 +1,5 @@
 text	gold	predicted	correct
+God save the most judgmental creeps	swift	shakespeare	0
 Who say they want what's best for me	swift	swift	1
 Sanctimoniously performing soliloquies I'll never see	swift	swift	1
 Thinkin' it can change the beat	swift	swift	1
@@ -9,6 +10,7 @@ You ain't gotta pray for me	swift	swift	1
 Me and my wild boy and all of this wild joy	swift	shakespeare	0
 If all you want is gray for me	swift	swift	1
 Then it's just white noise, and it's just my choice	swift	swift	1
+COUNTESS  This young gentlewoman had a father--O,	shakespeare	shakespeare	1
 that "had," how sad a passage 'tis!--whose skill	shakespeare	swift	0
 was almost as great as his honesty; had it stretched	shakespeare	shakespeare	1
 so far, would have made nature immortal, and	shakespeare	shakespeare	1
