@@ -16,8 +16,8 @@ predfpath: ../cosc426/labs/lab01/data/pred_agreement.tsv
 
 datafpath: ../cosc426/labs/lab01/data/agreement.tsv
 
-resultsfpath: ../cosc426/labs/lab01/data/results_agreement.tsv
+resultsfpath: ../cosc426/labs/lab01/results/agreement.tsv
 
 save: by_word, by_pair, by_cond
 
-conditions: number
+conditions: lemma, number
