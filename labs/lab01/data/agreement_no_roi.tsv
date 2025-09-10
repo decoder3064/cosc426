@@ -1,0 +1,17 @@
+sentid	pairid	contextid	lemma	number	comparison	sentence
+1	1	1	BE	sing	expected	Hello, the student is the chameleon.
+2	1	1	BE	sing	unexpected	Hello, the student are the chameleon.
+3	2	1	LIKE	sing	expected	Hello, the student likes the chameleon.
+4	2	1	LIKE	sing	unexpected	Hello, the student like the chameleon.
+5	3	2	BE	sing	expected	Hello, the chameleon is the student.
+6	3	2	BE	sing	unexpected	Hello, the chameleon are the student.
+7	4	2	LIKE	sing	expected	Hello, the chameleon likes the student.
+8	4	2	LIKE	sing	unexpected	Hello, the chameleon like the student.
+9	5	3	BE	plu	expected	Hello, students are chameleons.
+10	5	3	BE	plu	unexpected	Hello, students is chameleons.
+11	6	3	LIKE	plu	expected	Hello, students like chameleons.
+12	6	3	LIKE	plu	unexpected	Hello, students likes chameleons.
+13	7	4	BE	plu	expected	Hello, chameleons are students.
+14	7	4	BE	plu	unexpected	Hello, chameleons is students.
+15	8	4	LIKE	plu	expected	Hello, chameleons like students.
+16	8	4	LIKE	plu	unexpected	Hello, chameleons likes students.

@@ -20,4 +20,4 @@ resultsfpath: ../cosc426/labs/lab01/results/agreement.tsv
 
 save: by_word, by_pair, by_cond
 
-conditions: lemma, number
+conditions: lemma

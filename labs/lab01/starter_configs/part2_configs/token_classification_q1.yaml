@@ -1,6 +1,7 @@
 exp: TokenClassification
 
 mode:
+  - evaluate
   - analyze
 
 models:

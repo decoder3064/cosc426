@@ -1,6 +1,7 @@
 exp: TokenClassification
 
 mode:
+  - evaluate
   - analyze
 
 models:
@@ -29,3 +30,5 @@ id2label:
   10: I-person
   11: B-product
   12: I-product
+
+ignore: "O"

@@ -1,0 +1,3 @@
+	model	condition	micro-precision	micro-recall	micro-f1	macro-precision	macro-recall	macro-f1	accuracy
+0	distilbert-base-uncased	full	1.0	0.2	0.3333333333333333	1.0	0.2	0.3333333333333333	0.2
+1	distilbert-base-uncased	short	1.0	0.3333333333333333	0.5	1.0	0.3333333333333333	0.5	0.3333333333333333
