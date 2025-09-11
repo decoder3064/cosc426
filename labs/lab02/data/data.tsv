@@ -1,0 +1,10 @@
+						
+sentid	pairid	comparison	sentence	ROI	type
+	1	1	expected	Sally frightened Mary because she was terrifying. 	4	subject
+	2	1	unexpected	Marcus frightened Mary becuase she was terrifying. 	4	subject
+	3	2	expected	Sally bored Mary because she was boring.	4	subject
+	4	2	unexpected	Marcus bored Mary because she was boring.	4	subject
+	5	3	expected	Sally feared Mary because she was terrifying.	4	object
+	6	3	unexpected	Sally feared Marcus because she was terrifyng.	4	object
+	7	4	expected	Sally believed Mary becuase she was trustworthy.	4	object
+	8	4	unexpected	Sally believed Marcus because she was trustworthy.	4	objectx
